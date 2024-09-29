@@ -109,8 +109,41 @@ class GetShopList(GetCookBook):
                         }
         return self.product_dict
 
+    def get_shop_list(self, dishes=None, person_count=1):
+        self.dishes = dishes
+        self.dishes = [
+            list(self.our_cook_book.keys()) if self.dishes is None else self.dishes
+        ][0]
+        self.person_count = person_count
+        self.ingridient_name_list, self.ingridient_dict_list = (
+            self.get_ingridients_list(
+                dishes=self.dishes, person_count=self.person_count
+            )
+        )
+        return self.get_product_dict(
+            dishes=self.dishes,
+            person_count=self.person_count,
+            ingridient_name_list=self.ingridient_name_list,
+            ingridient_dict_list=self.ingridient_dict_list,
+        )
+
+
+def get_shop_list_by_dishes(dishes=None, person_count=1):
+    my_file_name_list = ["recipes.txt"]
+    my_CookBook = GetCookBook(my_file_name_list, dishes)
+    my_ShopList = GetShopList(my_CookBook.file_name_list, my_CookBook.our_product_list)
+    if dishes is None:
+        print(my_ShopList.get_shop_list(person_count=person_count))
+    else:
+        print(my_ShopList.get_shop_list(dishes, person_count))
+
 
 print("***** ЗАДАНИЕ 1 *****")
 print()
 print("Словарь cook_book:")
 print(GetCookBook(["recipes.txt"]).get_cook_book_dict())
+print()
+print("***** ЗАДАНИЕ 2 *****")
+print()
+print("Функция get_shop_list_by_dishes (заполнение списка блюд и количества персон):")
+get_shop_list_by_dishes(["Запеченный картофель", "Омлет"], 6)
