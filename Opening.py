@@ -138,6 +138,44 @@ def get_shop_list_by_dishes(dishes=None, person_count=1):
         print(my_ShopList.get_shop_list(dishes, person_count))
 
 
+class TextInfo(OpenFiles):
+    def __init__(self, file_name_list=None, encoding="utf-8"):
+        super().__init__(file_name_list, encoding)
+        self.files_data = self.open_files()
+        self.files_dict = {}
+        self.files_dict_sorted = {}
+
+    def get_files_dict(self):
+        for idx, val in enumerate(self.file_name_list):
+            self.files_dict[val] = {
+                "len_text": len(self.files_data[idx]),
+                "text": self.files_data[idx],
+            }
+        return self.files_dict
+
+    def sort_dict(self):
+        self.len_text_list = [
+            self.get_files_dict()[k]["len_text"] for k in self.get_files_dict().keys()
+        ]
+        for l in sorted(list(set(self.len_text_list))):
+            for f in self.file_name_list:
+                if self.get_files_dict()[f]["len_text"] == l:
+                    self.files_dict_sorted[f] = self.get_files_dict()[f]
+                    for k in self.get_files_dict()[f]:
+                        self.files_dict_sorted[f][k] = self.get_files_dict()[f][k]
+        return self.files_dict_sorted
+
+    def print_info(self):
+        for k, v in self.sort_dict().items():
+            print(k)
+            for v2 in v.values():
+                if type(v2) == int:
+                    print(f"{v2}")
+                else:
+                    for s in v2:
+                        print(s.strip())
+
+
 print("***** ЗАДАНИЕ 1 *****")
 print()
 print("Словарь cook_book:")
@@ -147,3 +185,8 @@ print("***** ЗАДАНИЕ 2 *****")
 print()
 print("Функция get_shop_list_by_dishes (заполнение списка блюд и количества персон):")
 get_shop_list_by_dishes(["Запеченный картофель", "Омлет"], 6)
+print()
+print("***** ЗАДАНИЕ 3 *****")
+print()
+print("Выведение информации о содержимом в текстовых файлах:")
+TextInfo(["1.txt", "2.txt", "3.txt"]).print_info()
